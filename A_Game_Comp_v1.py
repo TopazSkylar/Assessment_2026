@@ -143,21 +143,21 @@ class Play:
         # half the screen in pink - check if centered
         self.canvas_p.create_rectangle(200, 400, 396, 2, fill="#fc6ed5", outline="#fc6ed5")
 
-        button_hints = tk.Button(self.play_w, text="Hints", anchor="center", bg="#b2f7b7",  # Hints
+        self.button_hints = tk.Button(self.play_w, text="Hints", anchor="center", bg="#b2f7b7",  # Hints
                                  font=("Satisfy", 8), pady=10, padx=35)
-        button_nr = tk.Button(self.play_w, text="Next Round", anchor="center", bg="#17c223",  # Next Round
+        self.button_nr = tk.Button(self.play_w, text="Next Round", anchor="center", bg="#17c223",  # Next Round
                               font=("Satisfy", 8), pady=10, padx=35, command=self.new_round)
-        button_stats = tk.Button(self.play_w, text="Stats", anchor="center", bg="#b2f7b7",  # Stats
+        self.button_stats = tk.Button(self.play_w, text="Stats", anchor="center", bg="#b2f7b7",  # Stats
                                  font=("Satisfy", 8), pady=10, padx=35)
-        button_qg = tk.Button(self.play_w, text="Quit Game", anchor="center", bg="#b2f7b7",  # Quit Game
+        self.button_qg = tk.Button(self.play_w, text="Quit Game", anchor="center", bg="#b2f7b7",  # Quit Game
                               font=("Satisfy", 8), pady=8, padx=20,
                               command=self.end_game_button)
 
         # util buttons
-        button_hints_w = self.canvas_p.create_window(30, 350, anchor="nw", window=button_hints)  # Hints
-        button_nr_w = self.canvas_p.create_window(140, 300, anchor="nw", window=button_nr)  # New round
-        button_stats_w = self.canvas_p.create_window(270, 350, anchor="nw", window=button_stats)  # stats
-        button_qg_w = self.canvas_p.create_window(155, 350, anchor="nw", window=button_qg) # quit game
+        button_hints_w = self.canvas_p.create_window(30, 350, anchor="nw", window=self.button_hints)  # Hints
+        button_nr_w = self.canvas_p.create_window(140, 300, anchor="nw", window=self.button_nr)  # New round
+        button_stats_w = self.canvas_p.create_window(270, 350, anchor="nw", window=self.button_stats)  # stats
+        button_qg_w = self.canvas_p.create_window(155, 350, anchor="nw", window=self.button_qg) # quit game
 
 
         # the title of rounds to show the user where they are
@@ -226,8 +226,10 @@ class Play:
 
             # update heading
 
-            self.canvas_p.itemconfig(self.heading_text,
-                text=f"Round {self.heading_label}")
+            self.canvas_p.itemconfig(
+                self.heading_text,
+                text=f"Round {self.rounds_played.get()} of {self.rounds_to_play.get()}"
+            )
 
 
     def new_round(self):
@@ -250,7 +252,8 @@ class Play:
 
         rounds_to_play = self.rounds_to_play.get()
 
-        self.heading_label = tk.Label(root, text=f"Round {rounds_played} of {rounds_to_play}")
+
+
         # generates new data
         self.round_data = get_round_lyrics()
         self.choice = self.round_data[1]
@@ -261,14 +264,10 @@ class Play:
         # clears it
         self.canvas_p.delete("result")
 
-
-
         # update widgets
         self.update_round_display()
 
-
-        # Update heading, and score to beat labels. "Hide" results label
-        self.heading_label.config(text=f"Round {rounds_played + 1} of {rounds_to_play}")
+        self.button_nr.config(state="disabled")
 
     def check_ans(self, idx):
 
@@ -291,6 +290,7 @@ class Play:
 
         for item in self.buttons:
             item.config(state="disabled")
+        self.button_nr.config(state="normal")
 
 # Execute tkinter
 root.title("Taylor Swift Lyrics Quiz")
