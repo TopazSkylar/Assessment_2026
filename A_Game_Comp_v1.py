@@ -111,7 +111,6 @@ class Play:
         self.rounds_to_play.set(result)
         self.rounds_won = IntVar()
 
-        # lyric list per round
 
         # Create object
         self.play_w = Toplevel()

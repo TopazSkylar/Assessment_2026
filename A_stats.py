@@ -145,11 +145,11 @@ class Play:
         self.canvas_p.create_rectangle(200, 400, 396, 2, fill="#fc6ed5", outline="#fc6ed5")
 
         self.button_hints = tk.Button(self.play_w, text="Hints", anchor="center", bg="#b2f7b7",  # Hints
-                                 font=("Satisfy", 8), pady=10, padx=35, command=self.to_stats)
+                                 font=("Satisfy", 8), pady=10, padx=35)
         self.button_nr = tk.Button(self.play_w, text="Next Round", anchor="center", bg="#17c223",  # Next Round
                               font=("Satisfy", 8), pady=10, padx=35)
         self.button_stats = tk.Button(self.play_w, text="Stats", anchor="center", bg="#b2f7b7",  # Stats
-                                 font=("Satisfy", 8), pady=10, padx=35)
+                                 font=("Satisfy", 8), pady=10, padx=35, command=self.to_stats)
         self.button_qg = tk.Button(self.play_w, text="Quit Game", anchor="center", bg="#b2f7b7",  # Quit Game
                               font=("Satisfy", 8), pady=8, padx=20,
                               command=self.end_game_button)
@@ -203,6 +203,9 @@ class Play:
                                                          width=but_width_pixel)  # bottom left
             button_ans_4_w = self.canvas_p.create_window(210, 260, anchor="nw", window=self.button_ans_4,
                                                          width=but_width_pixel)  # bottom right
+
+            # disables stats at the start because there is no point before that point
+            self.button_stats.config(state='disabled')
 
             self.update_round_display()
 
@@ -268,7 +271,7 @@ class Play:
             self.button_nr.config(state="disabled")
 
     def check_ans(self, idx):
-
+            # checks everything the user has done and relays that result to them
             selected = self.choice[idx]
 
             # remove old result
@@ -289,12 +292,16 @@ class Play:
                 item.config(state="disabled")
             self.button_nr.config(state="normal")
 
+            # will only activate after the first round of play
+            self.button_stats.config(state="normal")
+
     def to_stats(self):
         # grabs all the info that the stats display will need
         rounds_played = self.rounds_played.get()
 
         rounds_won = self.rounds_won.get()
         bundle = [rounds_played,rounds_won]
+        self.button_stats.config(state="disabled")
 
         Stats(self, bundle)
 
@@ -321,6 +328,11 @@ class Stats:
 
         self.canvas_s.pack(fill="both", expand=True)
 
+        # img for bg
+        self.bg_s = PhotoImage(file="stats_bg.drawio.png")
+
+        self.canvas_s.create_image(200,200, image=self.bg_s)
+
         # Extract information from master list...
         rounds_played = bundle[0]
         rounds_won = bundle[1]
@@ -334,14 +346,11 @@ class Stats:
         self.stats.protocol('WM_DELETE_WINDOW',
                                    partial(self.close_stats, partner))
 
-
-
         # Math to populate Stats dialogue
         success_rate = rounds_won / rounds_played * 100
 
         # Strings for Stats Labels...
-        success_string = (f"Success Rate: {rounds_won} / {rounds_played}"
-                          f" ({success_rate:.0f}%)")
+        success_string = f"Success Rate: {rounds_won} / {rounds_played}"
 
         # custom comment text and formatting
         if rounds_won >= rounds_played:
@@ -360,28 +369,24 @@ class Stats:
         normal_font = ("Arial", 24)
         comment_font = ("Arial", 13)
 
-        self.round_disp = self.canvas_s.create_text(200, 100, text="asdasdasd", width=300,
-                                  justify="center", font=("Bebas Neue", 15), fill="#11ad45")
-        # self.button_nr = tk.Button(self.play_w, text="Next Round", anchor="center", bg="#17c223",  # Next Round
-        #                            font=("Satisfy", 8), pady=10, padx=35, command=self.new_round)
-        # self.button_stats = tk.Button(self.play_w, text="Stats", anchor="center", bg="#b2f7b7",  # Stats
-        #                               font=("Satisfy", 8), pady=10, padx=35)
-        # self.button_qg = tk.Button(self.play_w, text="Quit Game", anchor="center", bg="#b2f7b7",  # Quit Game
-        #                            font=("Satisfy", 8), pady=8, padx=20,
-        #                            command=self.end_game_button)
-
+        self.head_s_disp = self.canvas_s.create_text(115, 100, text="Statistics", width=300,
+                                  justify="left", font=("Permanent Marker", 24, "bold"), fill="#3B4053")
+        self.round_disp = self.canvas_s.create_text(135, 180, text=success_string, width=300,
+                                                    justify="left",  font=("Permanent Marker", 15, "bold"), fill="#444959")
+        self.round_disp = self.canvas_s.create_text(175, 260, text=f"Percentage correct = {success_rate}", width=300,
+                                                    justify="left", font=("Permanent Marker", 15, "bold"), fill="#383C47")
         # util buttons
 
      #   button_stats_w = self.canvas_p.create_window(270, 350, anchor="nw", window=self.button_stats)  # stats
      #   button_qg_w = self.canvas_p.create_window(155, 350, anchor="nw", window=self.button_qg)  # quit game
 
         self.dismiss_button = tk.Button(self.stats,
-                                      font=("Arial", 12, "bold"),
-                                      text="Dismiss", bg="#333333",
-                                         fg="#FFFFFF", width=20,
+                                      font=("Permanent Marker", 12, "bold"),
+                                      text="Dismiss", bg="#D4D5CD",
+                                         fg="#444959", width=7,
                                          command=partial(self.close_stats, partner))
 
-        button_dismiss_button = self.canvas_s.create_window(140, 300, anchor="nw", window=self.dismiss_button)  # disp dismiss
+        button_dismiss_button = self.canvas_s.create_window(160, 340, anchor="nw", window=self.dismiss_button)  # disp dismiss
 
     # closes help dialogue (by button and x at the top of dialogue)
 
@@ -390,8 +395,9 @@ class Stats:
             Closes stats dialogue box (and enables stats button)
             """
             # Put stats button back to normal...
-           # partner.stats_button.config(state=NORMAL)
+            partner.button_stats.config(state="normal")
             self.stats.destroy()
+
 
 # Execute tkinter
 root.title("Taylor Swift Lyrics Quiz")
