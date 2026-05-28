@@ -8,6 +8,15 @@ import tkinter as tk
 import tkinter.font as tkFont
 # Create object
 root = Tk()
+
+
+# Add image file
+
+bg_s = PhotoImage(file="album_r1.drawio.png")
+bg2_s= PhotoImage(file="album_r2.drawio.png")
+
+
+
 class StartGame:
 
     """
@@ -15,22 +24,14 @@ class StartGame:
     would like to play)
     """
 
-
     def __init__(self,root):
-
-
         # Adjust size
         root.geometry("400x400")
 
-        # Add image file
-        bg = PhotoImage(file="album_r1.drawio.png")
-        bg2 = PhotoImage(file="album_r2.drawio.png")
-
         # Create Canvas - where all the buttons and stuff will go
-        canvas_s = Canvas(root, width=400,
-                          height=400)
+        self.canvas_s = Canvas(root, width=400, height=400)
+        self.canvas_s.pack(fill="both", expand=True)
 
-        canvas_s.pack(fill="both", expand=True)
         # take the input and check it
         def num_check():
             """Can only enter integers"""
@@ -47,8 +48,8 @@ class StartGame:
                 return response
 
         # displays error message
-        wrong_text = canvas_s.create_text(
-            200, 240,
+        self.wrong_text = self.canvas_s.create_text(
+            200, 200,
             text="Please enter a positive integer",
             font=("Permanent Marker", 8),
             fill="#FF0000",
@@ -59,50 +60,44 @@ class StartGame:
         def on_start():
             result = num_check()
             if result == "<0/vE":
-                canvas_s.itemconfig(wrong_text, state="normal")
+                self.canvas_s.itemconfig(self.wrong_text, state="normal")
                 return None
             else:
-                canvas_s.itemconfig(wrong_text, state="hidden")
+                self.canvas_s.itemconfig(self.wrong_text, state="hidden")
                 print("Valid input:", result)
-                return  Play(result)
+                self.canvas_s.destroy()
+                return Play(result)
 
         # Display image
-        canvas_s.create_image(20, 100, image=bg,
+        self.canvas_s.create_image(20, 100, image=bg_s,
                               anchor="w")
-        canvas_s.create_image(200, 400, image=bg2, anchor="s")
-        # #ae23da
+        self.canvas_s.create_image(200, 400, image=bg2_s, anchor="s")
+
         # backgrounds for title and instructions
-        canvas_s.create_rectangle(396, 40, 10, 10, fill="#f0eaf3", outline="#f0eaf3")
-        canvas_s.create_rectangle(2, 280, 396, 160, fill="#f0eaf3", outline="#fc6ed5")
+        self.canvas_s.create_rectangle(396, 40, 10, 10, fill="#f0eaf3", outline="#f0eaf3")
+        self.canvas_s.create_rectangle(2, 280, 396, 160, fill="#f0eaf3", outline="#fc6ed5")
         # side borders
         # right
-        canvas_s.create_rectangle(380, 700, 396, 2, fill="#fc6ed5", outline="#fc6ed5")
+        self.canvas_s.create_rectangle(380, 700, 396, 2, fill="#fc6ed5", outline="#fc6ed5")
         # left
-        canvas_s.create_rectangle(1, 700, 20, 2, fill="#fc6ed5", outline="#fc6ed5")
+        self.canvas_s.create_rectangle(1, 700, 20, 2, fill="#fc6ed5", outline="#fc6ed5")
         # top slightly
-        canvas_s.create_rectangle(1, -10, 396, 5, fill="#fc6ed5", outline="#fc6ed5")
+        self.canvas_s.create_rectangle(1, -10, 396, 5, fill="#fc6ed5", outline="#fc6ed5")
 
         # Add Text
-        canvas_s.create_text(200, 25, text="Taylor Swift Lyrics Quiz", font=("Satisfy", 17), fill="#ae23da")
-        canvas_s.create_text(200, 200, text="You will be presented "
+        self.canvas_s.create_text(200, 25, text="Taylor Swift Lyrics Quiz", font=("Satisfy", 17), fill="#ae23da")
+        self.canvas_s.create_text(200, 200, text="You will be presented "
                                             "with the first lyrics from these 6 albums "
                                             "Try and guess em :))", width=300,
                              justify="center", font=("Bebas Neue", 15), fill="#ff14c7")
 
         # where they enter the round number
         entry = Entry(root)
-        entry_window = canvas_s.create_window(140, 250, anchor="nw", window=entry)
+        entry_window = self.canvas_s.create_window(140, 250, anchor="nw", window=entry)
 
         # Making the buttons - where they click the start button to check that it's a real int
-        button_s = tk.Button(root, text="start", anchor="nw", command=on_start, font=("Permanent Marker", 8))
-        button_s_window = canvas_s.create_window(270, 250, anchor="nw", window=button_s)
-
-
-# Create Canvas - where all the buttons and stuff will go
-canvas2 = Canvas(root, width=400,
-                 height=400)
-
-canvas2.pack(fill="both", expand=True)
+        self.button_s = tk.Button(root, text="start", anchor="nw", command=on_start, font=("Permanent Marker", 8))
+        self.button_s_window = self.canvas_s.create_window(270, 250, anchor="nw", window=self.button_s)
 
 # Adjust size
 root.geometry("400x400")
@@ -135,7 +130,7 @@ def get_round_lyrics():
     while len(round_song) < 4:
         potential_song = random.choice(all_song_list)
 
-        # Get the songs and check it's not a duplicate
+        # Get the songs and check it's not a dupe
         if potential_song[0] not in final_round_song:
             round_song.append(potential_song)
             final_round_song.append(potential_song[0])
@@ -149,7 +144,7 @@ def get_round_lyrics():
     questioned_lyrics = questioned_song[1]  # Take the lyrics of all the song and have it be the thing user sees
     album = questioned_song[2]  # The album
 
-    # FIXED: Find the correct song name directly from the picked questioned_song object
+    # Find the correct song name directly from the picked questioned_song object
     correct_song = questioned_song[0]
 
     return questioned_lyrics, final_round_song, correct_song, album
@@ -187,9 +182,7 @@ class Play:
         self.rounds_played.set(0)
         self.rounds_to_play = IntVar()
         self.rounds_to_play.set(result)
-        self.rounds_to_play.set(result)
         self.rounds_won = IntVar()
-
 
         # Create object
         self.play_w = Toplevel()
@@ -204,9 +197,6 @@ class Play:
                                height=400)
 
         self.canvas_p.pack(fill="both", expand=True)
-
-
-
 
         # backgrounds for title and instructions
         self.canvas_p.create_rectangle(360, 200, 40, 50, outline="#fc6ed5")
@@ -330,8 +320,6 @@ class Play:
 
         rounds_to_play = self.rounds_to_play.get()
 
-
-
         # generates new data
         self.round_data = get_round_lyrics()
         self.choice = self.round_data[1]
@@ -341,6 +329,8 @@ class Play:
 
         # clears it
         self.canvas_p.delete("result")
+        
+
 
         # update widgets
         self.update_round_display()
@@ -395,37 +385,45 @@ class DisplayHints:
 
     def __init__(self, partner, current_album):
 
+        # preset variables before generating anything
+        if current_album == 1:
+            hbtxt = "Taylor Swift"
+            bgf = "hints_bg_1.png"
+            bg = "#029c67"
+        elif current_album == 2:
+            hbtxt = "Fearless"
+            bgf = "hints_bg_2.png"
+            bg = "#e9c581"
+        elif current_album == 3:
+            hbtxt = "Speak Now"
+            bgf = "hints_bg_3.png"
+            bg = "#a3277b"
+        elif current_album == 4:
+            hbtxt = "Red"
+            bgf = "hints_bg_4.png"
+            bg = "#a12f49"
+        elif current_album == 5:
+            hbtxt = "1989"
+            bgf = "hints_bg_5.png"
+            bg = "#0bc0d4"
+        else:
+            hbtxt = "Reputation"
+            bgf = "hints_bg_6.png"
+            bg = "#c5c5c5"
+
+        self.bg_color = bg
+
         self.hints = Toplevel()
         # Create Canvas - where all the buttons and stuff will go
         self.canvas_h = Canvas(self.hints, width=400,
-                               height=400)
+                               height=400, bg = self.bg_color)
 
         # Adjust size
         self.hints.geometry("400x400")
         self.hints.title("Taylor Swift Lyrics Quiz Play")
         # destroy window when end game is pressed
-        self.dismiss_button = self.hints.destroy
 
         self.canvas_h.pack(fill="both", expand=True)
-
-        if current_album == 1:
-            hbtxt = "Taylor Swift"
-            bgf = "hints_bg_1.png"
-        elif current_album == 2:
-            hbtxt = "Fearless"
-            bgf = "hints_bg_2.png"
-        elif current_album == 3:
-            hbtxt = "Speak Now"
-            bgf = "hints_bg_3.png"
-        elif current_album == 4:
-            hbtxt = "Red"
-            bgf = "hints_bg_4.png"
-        elif current_album == 5:
-            hbtxt = "1989"
-            bgf = "hints_bg_5.png"
-        else:
-            hbtxt = "Reputation"
-            bgf = "hints_bg_6.png"
 
         self.bg_h = PhotoImage(file = bgf)
         print(self.bg_h)
@@ -437,10 +435,13 @@ class DisplayHints:
 
 
         # text used for hints
-        self.head_s_disp = self.canvas_h.create_text(200, 50, text="Hints", width=300,
-                                                     justify="left", font=("Permanent Marker", 24, "bold"),
-                                                     fill="#3B4053")
-        self.hint_disp = self.canvas_h.create_text(200, 200, text=f"This is from {hbtxt}")
+        self.head_s_disp = self.canvas_h.create_text(200, 12, text="Hints", width=300,
+                                                     justify="left", font=("Permanent Marker", 22, "bold"),
+                                                     fill="#000000")
+        self.hint_disp = self.canvas_h.create_text(200, 37, text=f"This is from {hbtxt}",
+                                                   font=("Bebas Neue", 18, "bold"),)
+
+
 
         self.dismiss_button = tk.Button(self.hints,
                                       font=("Permanent Marker", 12, "bold"),
@@ -448,15 +449,15 @@ class DisplayHints:
                                          fg="#444959", width=7,
                                          command=partial(self.close_hints, partner))
 
-        button_dismiss_button = self.canvas_h.create_window(160, 340, anchor="nw", window=self.dismiss_button)  # disp dismiss
+        button_dismiss_button = self.canvas_h.create_window(160, 355, anchor="nw", window=self.dismiss_button)  # disp dismiss
 
 
 
 
     def close_hints(self, partner):
         """
-            Closes hints dialogue box (and enables hints button)
-            """
+        Closes hints dialogue box (and enables hints button)
+        """
         # Put hints button back to normal...
         partner.button_hints.config(state="normal")
         self.hints.destroy()
@@ -491,17 +492,13 @@ class Stats:
         rounds_played = bundle[0]
         rounds_won = bundle[1]
 
-
-        # disable stats button
-#        self.button_stats.config(state=DISABLED)
-
         # If users press cross at top, closes help and
         # 'releases' help button
         self.stats.protocol('WM_DELETE_WINDOW',
                                    partial(self.close_stats, partner))
 
         # Math to populate Stats dialogue
-        success_rate = rounds_won / rounds_played * 100
+        success_rate = round(rounds_won / rounds_played * 101,1)
 
         # Strings for Stats Labels...
         success_string = f"Success Rate: {rounds_won} / {rounds_played}"
