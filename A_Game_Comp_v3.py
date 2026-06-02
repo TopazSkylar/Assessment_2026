@@ -55,7 +55,7 @@ class StartGame:
             else:
                 self.canvas_s.itemconfig(self.wrong_text, state="hidden")
                 print("Valid input:", result)
-                self.canvas_s.destroy()
+                root.withdraw()
                 return Play(result)
                 
 
@@ -167,6 +167,7 @@ class Play:
 
     def __init__(self, result):
         # as titled
+        self.button_ans_1 = None
         self.round_data = get_round_lyrics()
         self.choice = self.round_data[1]
         self.round_song = self.round_data[1]
@@ -174,7 +175,7 @@ class Play:
         self.questioned_lyrics = self.round_data[0]
         self.album = int(self.round_data[3])
         self.rounds_played = IntVar()
-        self.rounds_played.set(0)
+        self.rounds_played.set(1)
         self.rounds_to_play = IntVar()
         self.rounds_to_play.set(result)
         self.rounds_won = IntVar()
@@ -228,15 +229,16 @@ class Play:
 
         self.heading_text = self.canvas_p.create_text(200, 25, text=self.heading_label.get(), font=("Satisfy", 17), fill="#ae23da")
 
-        # #ae23da
         self.funct()
-        self.new_round()
 
     def close_play(self):
             # reshow root (ie: choose rounds) and end current '
             # game / allow new game to start
             root.deiconify()
-            self.canvas_p.destroy()
+            self.play_w.destroy()
+            self.rounds_played.set(1)
+            self.rounds_won.set(0)
+
 
     def funct(self):
         # below are how the question + question buttons are generated
@@ -244,7 +246,7 @@ class Play:
 
         # lyrics
         self.lyrics_text = self.canvas_p.create_text(200, 100, text=self.questioned_lyrics, width=300,
-                                  justify="center", font=("Bebas Neue", 15), fill="#11ad45")
+                                  justify="center", font=("Bebas Neue", 19), fill="#11ad45")
 
         self.button_ans_1 = tk.Button(self.play_w, text=self.round_song[0], wraplength=but_width_pixel,
                                       command=lambda: self.check_ans(0))
@@ -270,6 +272,7 @@ class Play:
                                                          width=but_width_pixel)  # bottom left
         self.canvas_p.create_window(210, 260, anchor="nw", window=self.button_ans_4,
                                                          width=but_width_pixel)  # bottom right
+        self.button_stats.config(state="disabled")
 
         self.update_round_display()
 
@@ -310,7 +313,9 @@ class Play:
 
         if self.rounds_played.get() == self.rounds_to_play.get():
             self.canvas_p.delete("result")
-            self.button_nr.config(text = "Play Again", bg="#D34ABC")
+            self.canvas_p.create_text(200, 180, text=f"Score: {self.rounds_won.get()} / {self.rounds_to_play.get()}",
+                    fill="blue", font=("Permanent Marker", 16), tags="result")
+            self.button_qg.config(text = "Play Again", bg="#D34ABC")
 
             return
 
@@ -393,7 +398,7 @@ class DisplayHints:
             print("self_t")
             hbtxt = "Taylor Swift"
             bgf = "hints_bg_1.png"
-            bg = "#029c67"
+            bg = "#25a36f"
         elif current_album == 2:
             print("2")
             hbtxt = "Fearless"
@@ -468,7 +473,7 @@ class DisplayHints:
         Closes hints dialogue box (and enables hints button)
         """
         # Put hints button back to normal...
-        self.canvas_h.delete()
+        self.hints.destroy()
         partner.button_hints.config(state="normal")
         self.hints.destroy()
 
@@ -508,7 +513,10 @@ class Stats:
                                    partial(self.close_stats, partner))
 
         # Math to populate Stats dialogue
-        success_rate = round(rounds_won / rounds_played * 101,1)
+        if rounds_won == 0:
+            success_rate = 0
+        else:
+            success_rate = round(rounds_won / rounds_played * 100,1)
 
         # Strings for Stats Labels...
         success_string = f"Success Rate: {rounds_won} / {rounds_played}"
