@@ -108,7 +108,7 @@ def get_song_var():
     """
 
 
-    file = open("lyric_list.csv")
+    file = open("lyric_list.csv.csv")
     all_vars = list(csv.reader(file, delimiter=","))
     file.close()
 
@@ -376,6 +376,7 @@ class Play:
         # disable help button
         current_album = self.album
         self.button_hints.config(state="disabled")
+        self.button_qg.config(state="disabled")
         DisplayHints(self, current_album, self.button_nr)
 
     def to_stats(self):
@@ -385,6 +386,7 @@ class Play:
         rounds_won = self.rounds_won.get()
         bundle = [rounds_played,rounds_won]
         self.button_stats.config(state="disabled")
+        self.button_qg.config(state="disabled")
 
         Stats(self, bundle)
 
@@ -472,8 +474,9 @@ class DisplayHints:
         """
         Closes hints dialogue box (and enables hints button)
         """
-        # Put hints button back to normal...
+        # Put hints / quit button back to normal...
         self.hints.destroy()
+        partner.button_qg.config(state="normal")
         partner.button_hints.config(state="normal")
         self.hints.destroy()
 
@@ -542,8 +545,9 @@ class Stats:
             """
             Closes stats dialogue box (and enables stats button)
             """
-            # Put stats button back to normal...
+            # Put stats / quit button back to normal...
             partner.button_stats.config(state="normal")
+            partner.button_qg.config(state="normal")
             self.stats.destroy()
 
 

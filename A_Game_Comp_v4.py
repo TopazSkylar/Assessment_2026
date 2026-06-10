@@ -121,7 +121,6 @@ def get_round_lyrics():
     round_song = []
     final_round_song = []
 
-
     # loop until we got them songs for each round
     while len(round_song) < 4:
         potential_song = random.choice(all_song_list)
@@ -157,7 +156,6 @@ def adjust_font(button, text, max_width):
 class Play:
     def __init__(self, result):
         # as titled
-        self.button_ans_1 = None
         self.round_data = get_round_lyrics()
         self.choice = self.round_data[1]
         self.round_song = self.round_data[1]
@@ -200,9 +198,9 @@ class Play:
                                  font=("Satisfy", 8), pady=10, padx=35, command=self.to_hints)
         self.button_nr = tk.Button(self.play_w, text="Next Round", anchor="center", bg="#17c223",  # Next Round
                                    font=("Satisfy", 8), pady=10, padx=35, command=self.new_round)
-        self.button_stats = tk.Button(self.play_w, text="Stats", anchor="center", bg="#b2f7b7",  # Stats
+        self.button_stats = tk.Button(self.play_w, text="Stats", anchor="center", bg="#D3D3D3",  # Stats
                                  font=("Satisfy", 8), pady=10, padx=35, command=self.to_stats)
-        self.button_qg = tk.Button(self.play_w, text="Quit Game", anchor="center", bg="#b2f7b7",  # Quit Game
+        self.button_qg = tk.Button(self.play_w, text="Quit Game", anchor="center", bg="#FFD700",  # Quit Game
                               font=("Satisfy", 8), pady=8, padx=20,
                               command=self.close_play)
 
@@ -240,7 +238,7 @@ class Play:
 
         # lyrics
         self.lyrics_text = self.canvas_p.create_text(200, 120, text=self.questioned_lyrics, width=300,
-                                  justify="center", font=("Bebas Neue", 16), fill="#11ad45")
+                                  justify="center", font=("Bebas Neue", 16), fill="#CC5500")
 
         self.button_ans_1 = tk.Button(self.play_w, text=self.round_song[0], wraplength=but_width_pixel,
                                       command=lambda: self.check_ans(0))
@@ -270,9 +268,6 @@ class Play:
 
         self.update_round_display()
 
-
-
-
     def update_round_display(self):
         but_width_pixel = 120  # Define the width limit in pixels
 
@@ -295,9 +290,7 @@ class Play:
 
             self.canvas_p.itemconfig(
                 self.heading_text,
-                text=f"Round {self.rounds_played.get()} of {self.rounds_to_play.get()}"
-            )
-
+                text=f"Round {self.rounds_played.get()} of {self.rounds_to_play.get()}")
 
     def new_round(self):
         """
@@ -309,7 +302,7 @@ class Play:
             self.canvas_p.delete("result")
             self.canvas_p.create_text(200, 180, text=f"Score: {self.rounds_won.get()} / {self.rounds_to_play.get()}",
                     fill="blue", font=("Permanent Marker", 16), tags="result")
-            self.button_qg.config(text = "Play Again", bg="#D34ABC")
+            self.button_qg.config(text = "Play Again", bg="#89CFF0")
 
             return
 
@@ -335,8 +328,6 @@ class Play:
         self.button_nr.config(state="disabled")
         self.update_round_display()
 
-
-
     def check_ans(self, idx):
 
         selected = self.choice[idx]
@@ -354,7 +345,7 @@ class Play:
             result_text = f"Oops! It was {self.correct_choice}"
             result_color = "red"
         # displays that text
-        self.canvas_p.create_text(200, 180, text=result_text, fill=result_color, font=("Arial", 11), tags="result")
+        self.canvas_p.create_text(200, 180, text=result_text, fill=result_color, width=300, justify="center", font=("Arial", 11), tags="result")
 
         # enables new round button after that feedback is given
         for item in self.buttons:
@@ -393,32 +384,26 @@ class DisplayHints:
 
         # preset variables before generating anything
         if current_album == 1:
-            print("self_t")
             hbtxt = "Taylor Swift"
             bgf = "hints_bg_1.png"
             bg = "#25a36f"
         elif current_album == 2:
-            print("2")
             hbtxt = "Fearless"
             bgf = "hints_bg_2.png"
             bg = "#e9c581"
         elif current_album == 3:
-            print("3")
             hbtxt = "Speak Now"
             bgf = "hints_bg_3.png"
             bg = "#a3277b"
         elif current_album == 4:
-            print("4")
             hbtxt = "Red"
             bgf = "hints_bg_4.png"
             bg = "#a12f49"
         elif current_album == 5:
-            print("5")
             hbtxt = "1989"
             bgf = "hints_bg_5.png"
             bg = "#0bc0d4"
         else:
-            print("6")
             hbtxt = "Reputation"
             bgf = "hints_bg_6.png"
             bg = "#c5c5c5"
