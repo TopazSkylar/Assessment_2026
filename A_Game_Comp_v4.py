@@ -7,6 +7,16 @@ from tkinter import *
 import tkinter as tk
 import tkinter.font as tkFont
 
+# All stuff need for the hints section 
+ALBUM_INFO = {
+    1: ("Taylor Swift", "hints_bg_1.png", "#25a36f"),
+    2: ("Fearless", "hints_bg_2.png", "#e9c581"),
+    3: ("Speak Now", "hints_bg_3.png", "#a3277b"),
+    4: ("Red", "hints_bg_4.png", "#a12f49"),
+    5: ("1989", "hints_bg_5.png", "#0bc0d4"),
+    6: ("Reputation", "hints_bg_6.png", "#c5c5c5")
+}
+
 # Create object
 root = Tk()
 
@@ -374,6 +384,7 @@ class Play:
         bundle = [rounds_played,rounds_won]
         self.button_stats.config(state="disabled")
         self.button_qg.config(state="disabled")
+        self.button_nr.config(state="disabled")
 
         Stats(self, bundle)
 
@@ -382,31 +393,7 @@ class DisplayHints:
 
     def __init__(self, partner, current_album, but):
 
-        # preset variables before generating anything
-        if current_album == 1:
-            hbtxt = "Taylor Swift"
-            bgf = "hints_bg_1.png"
-            bg = "#25a36f"
-        elif current_album == 2:
-            hbtxt = "Fearless"
-            bgf = "hints_bg_2.png"
-            bg = "#e9c581"
-        elif current_album == 3:
-            hbtxt = "Speak Now"
-            bgf = "hints_bg_3.png"
-            bg = "#a3277b"
-        elif current_album == 4:
-            hbtxt = "Red"
-            bgf = "hints_bg_4.png"
-            bg = "#a12f49"
-        elif current_album == 5:
-            hbtxt = "1989"
-            bgf = "hints_bg_5.png"
-            bg = "#0bc0d4"
-        else:
-            hbtxt = "Reputation"
-            bgf = "hints_bg_6.png"
-            bg = "#c5c5c5"
+        hbtxt, bgf, bg = ALBUM_INFO[current_album]
 
         self.bg_color = bg
 
@@ -419,7 +406,9 @@ class DisplayHints:
         self.hints.geometry("400x400")
         self.hints.title("Taylor Swift Lyrics Quiz Play")
         # destroy window when end game is pressed
-        but.config(state="disabled")
+        
+        self.next_round_button = but
+        self.next_round_button.config(state="disabled")
         self.canvas_h.pack(fill="both", expand=True)
 
         self.bg_h = PhotoImage(file = bgf)
@@ -459,6 +448,7 @@ class DisplayHints:
         self.hints.destroy()
         partner.button_qg.config(state="normal")
         partner.button_hints.config(state="normal")
+        self.next_round_button.config(state="normal")
         self.hints.destroy()
 
 class Stats:
@@ -526,9 +516,10 @@ class Stats:
             """
             Closes stats dialogue box (and enables stats button)
             """
-            # Put stats / quit button back to normal...
+            # Put stats / quit / nr button back to normal...
             partner.button_stats.config(state="normal")
             partner.button_qg.config(state="normal")
+            partner.button_nr.config(state="normal")
             self.stats.destroy()
 
 
