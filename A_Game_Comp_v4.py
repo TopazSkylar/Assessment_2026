@@ -308,6 +308,7 @@ class Play:
         with new ones
         """
 
+
         if self.rounds_played.get() == self.rounds_to_play.get():
             self.canvas_p.delete("result")
             self.canvas_p.create_text(200, 180, text=f"Score: {self.rounds_won.get()} / {self.rounds_to_play.get()}",
@@ -362,6 +363,7 @@ class Play:
             item.config(state="disabled")
         self.button_nr.config(state="normal")
 
+
         # will only activate after the first round of play
         self.button_stats.config(state="normal")
 
@@ -374,7 +376,7 @@ class Play:
         current_album = self.album
         self.button_hints.config(state="disabled")
         self.button_qg.config(state="disabled")
-        DisplayHints(self, current_album, self.button_nr)
+        DisplayHints(self, current_album)
 
     def to_stats(self):
         # grabs all the info that the stats display will need
@@ -384,14 +386,13 @@ class Play:
         bundle = [rounds_played,rounds_won]
         self.button_stats.config(state="disabled")
         self.button_qg.config(state="disabled")
-        self.button_nr.config(state="disabled")
 
         Stats(self, bundle)
 
 
 class DisplayHints:
 
-    def __init__(self, partner, current_album, but):
+    def __init__(self, partner, current_album):
 
         hbtxt, bgf, bg = ALBUM_INFO[current_album]
 
@@ -405,10 +406,8 @@ class DisplayHints:
         # Adjust size
         self.hints.geometry("400x400")
         self.hints.title("Taylor Swift Lyrics Quiz Play")
-        # destroy window when end game is pressed
+    
         
-        self.next_round_button = but
-        self.next_round_button.config(state="disabled")
         self.canvas_h.pack(fill="both", expand=True)
 
         self.bg_h = PhotoImage(file = bgf)
@@ -418,7 +417,11 @@ class DisplayHints:
         self.canvas_h.image = self.bg_h
 
         self.canvas_h.create_image(200, 200, image=self.bg_h)
-
+        # if they x out, won't crash
+        self.hints.protocol(
+            "WM_DELETE_WINDOW",
+            partial(self.close_hints, partner)
+            )
 
         # text used for hints
         self.head_s_disp = self.canvas_h.create_text(200, 12, text="Hints", width=300,
@@ -445,10 +448,10 @@ class DisplayHints:
         Closes hints dialogue box (and enables hints button)
         """
         # Put hints / quit button back to normal...
-        self.hints.destroy()
+
         partner.button_qg.config(state="normal")
         partner.button_hints.config(state="normal")
-        self.next_round_button.config(state="normal")
+   
         self.hints.destroy()
 
 class Stats:
@@ -463,9 +466,7 @@ class Stats:
         # Adjust size
         self.stats.geometry("400x400")
         self.stats.title("Taylor Swift Lyrics Quiz Play")
-        # destroy window when end game is pressed
-        self.dismiss_button = self.stats.destroy
-
+        
         # Create Canvas - where all the buttons and stuff will go
         self.canvas_s = Canvas(self.stats, width=400,
                                height=400)
@@ -519,7 +520,7 @@ class Stats:
             # Put stats / quit / nr button back to normal...
             partner.button_stats.config(state="normal")
             partner.button_qg.config(state="normal")
-            partner.button_nr.config(state="normal")
+
             self.stats.destroy()
 
 
