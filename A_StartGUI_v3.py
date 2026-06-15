@@ -50,13 +50,6 @@ entry_window = canvas_s.create_window(140, 250, anchor="nw", window=entry)
 wrong_label = Label(root, text="Please enter an integer")
 wrong_label.pack(pady=20)
 
-def hide():
-    wrong_label.pack_forget()
-
-
-def show():
-    wrong_label.pack()
-
 # take the input and check it
 def num_check():
     """Can only enter integers"""

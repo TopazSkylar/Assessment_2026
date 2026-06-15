@@ -192,8 +192,6 @@ class DisplayHints:
         # Adjust size
         self.hints.geometry("400x400")
         self.hints.title("Taylor Swift Lyrics Quiz Play")
-        # destroy window when end game is pressed
-
         self.canvas_h.pack(fill="both", expand=True)
 
         self.bg_h = PhotoImage(file = bgf)
@@ -210,7 +208,7 @@ class DisplayHints:
                                                      justify="left", font=("Permanent Marker", 22, "bold"),
                                                      fill="#000000")
         self.hint_disp = self.canvas_h.create_text(200, 37, text=f"This is from {hbtxt}",
-                                                   font=("Bebas Neue", 18, "bold"),)
+                                                   font=("Bebas Neue", 18, "bold"))
 
         self.dismiss_button = tk.Button(self.hints,
                                       font=("Permanent Marker", 12, "bold"),
